@@ -14,7 +14,7 @@ In this repo you can find the code as I follow the "Build a Social Network from 
 
 Used PDO + prepared statements all the way through,
 
-Used password_hash() to encrypt the user's password when save them in the DB during the registration and password_verify() and password_needs_rehash() in the login process.
+Used `password_hash()` to encrypt the user's password when save them in the DB during the registration and `password_verify()` and `password_needs_rehash()` in the login process.
 
 Used more of the Bootstrap classes and functionality, while combining it with my own css.
 

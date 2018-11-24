@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# ###
+# When we have a url like:
+# http://localhost/friends-cube/apo_gouv
+# OR http://localhost/friends-cube/apo_gouv/
+# we want actually to call the profile.php page and pass the
+# last part, e.g: apo_gouv, as param to this file
+RewriteRule ^([a-zA-Z0-9_-]+)$ profile.php?profile_username=$1
+RewriteRule ^([a-zA-Z0-9_-]+)/$ profile.php?profile_username=$1

@@ -1,0 +1,302 @@
+@font-face{
+    font-family: 'Bellota-LightItalic';
+    src: url('../fonts/Bellota-LightItalic.otf')
+}
+@font-face{
+    font-family: 'Bellota-BoldItalic';
+    src: url('../fonts/Bellota-BoldItalic.otf')
+}
+
+body{
+    background: #ecf0f1;
+}
+
+a {
+    color: #20a8d8;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects
+}
+
+a:hover {
+    color: #167495;
+    text-decoration: underline
+}
+
+a:not([href]):not([tabindex]) {
+    color: inherit;
+    text-decoration: none
+}
+
+a:not([href]):not([tabindex]):hover,a:not([href]):not([tabindex]):focus {
+    color: inherit;
+    text-decoration: none
+}
+
+a:not([href]):not([tabindex]):focus {
+    outline: 0
+}
+
+/* -------------------------
+ *         Main Nav
+ * -------------------------
+ */
+#main-nav .container-fluid{
+    padding: 0;
+}
+.navbar-dark .navbar-brand{
+    font-family: 'Bellota-BoldItalic', sans-serif;
+    margin-left: 10px;
+    font-size: 31px;
+    position: relative;
+    color: #1abc9c;
+    top: 0px;
+    text-shadow: #16a085 0.5px 0.5px 0px;
+}
+.navbar-dark .navbar-brand:hover{
+    color: #1abc9c;
+    text-decoration: none;
+    border-bottom: none;
+}
+
+.navbar-dark .navbar-nav.main-menu .nav-link {
+    color: rgba(255,255,255,.5);
+    height: 40px;
+}
+.navbar-dark .navbar-nav.main-menu .nav-link:hover{
+    color: #fff;
+    border-bottom: 5px solid #e67e22;
+    text-decoration: none;
+}
+
+/* -------------------------
+ *         Content
+ * -------------------------
+ */
+.container.wrapper {
+    padding: 10px 0 0 0;
+}
+
+/* -------------------------
+ *         post-submit
+ * -------------------------
+ */
+.post_form{
+    width: 100%;
+}
+.post_form textarea {
+    width: 85%;
+    height: 60px;
+    border-radius: 3px;
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: 1px solid #cacaca;
+    font-size: 12px;
+}
+textarea:focus{
+    outline:0;
+}
+.post_form input[type="submit"]{
+    width: 13%;
+    height: 60px;
+    border: none;
+    border-radius: 3px;
+    background-color: #1abc9c;
+    font-family: 'Bellota-BoldItalic', sans-serif;
+    color:#fff;
+    text-shadow: #16a085 0.5px 0.5px 0px;
+    font-size: 90%;
+    position: absolute;
+    outline: 0;
+    margin: 0;
+}
+.post_form input[type="submit"]:active{
+    padding: 5px 2px 2px 5px;
+}
+input[type="submit"]:hover{
+    cursor: pointer;
+}
+
+/* -------------------------
+ *         posts-list
+ * -------------------------
+ */
+img#loading {
+    margin: 0 auto;
+    display: block;
+}
+.status_post {
+    width: 96%;
+    min-height: 75px;
+    padding: 0 5px;
+    font-size: 15px;
+}
+.post_profile_pic {
+    float: left;
+    margin-right: 7px;
+}
+.post_profile_pic img {
+    border-radius: 5px;
+}
+
+/* -------------------------
+ *         posts-delete button
+ * -------------------------
+ */
+.delete_button {
+    padding: 0;
+    width: 21px;
+    height: 21px;
+    line-height: 0px;
+    float: right;
+    position: relative;
+    right: -15px;
+}
+
+/* -------------------------
+ *         comments
+ * -------------------------
+ */
+ #comment_iframe{
+     max-height: 250px;
+     width: 100%;
+     margin-top: 5px;
+ }
+
+ .comment_section {
+     padding: 0px 5px 5px 5px;
+ }
+
+ .comment_section img{
+    margin: 0px 3px 3px 3px;
+    border-radius: 3px;
+}
+
+#comment_form textarea{
+    border-color: #D3D3D3;
+    width: 85%;
+    height: 35px;
+    border-radius: 5px;
+    color: #616060;
+    font-size: 14px;
+    margin: 3px 3px 3px 5px;
+    max-width: 588px;
+}
+
+#comment_form input[type="submit"]{
+    border: none;
+    background-color: #343a40;
+    color: #ecf0f1;
+    height: 35px;
+    border-radius: 5px;
+    width: 13%;
+    margin: 3px 0 0 0;
+    position: absolute;
+    font-family: 'Bellota-BoldItalic', sans-serif;
+    text-shadow: #9a9da0 0.5px 0.5px 0px;
+}
+
+
+.friendscubePostOptions{
+    padding: 0px;
+    text-decoration: none;
+    color: #20a8d8;
+}
+body.like_wrapper{
+    background: #fff;
+    margin: 3px 3px 3px 3px;
+}
+
+button {
+    cursor: pointer;
+}
+
+#like_iframe{
+    border: 0;
+    height: 25px;
+    width: 120px;
+    position: relative;
+    top: 7px;
+}
+
+.friendscubePostOptions form {
+    position: absolute;
+    top: 0px;
+}
+.comment_like{
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    color: #3498db;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    width: auto;
+}
+
+.like_value{
+    display: inline;
+    font-size: 14px;
+}
+
+.like_value .badge{
+    display: inline-block;
+    padding: .25em .4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+}
+
+.like_value .badge-info {
+    color: #fff;
+    background-color: #17a2b8;
+}
+
+#sidebar {
+    width: 230px;
+    position: fixed;
+    top: 72px; /* The height of top bar */
+    left: 0;
+    padding: 15px 0px 15px 0px;
+    height: 100vh;
+    z-index: 999;
+    background: #607d8b;
+    color: #fff;
+    transition: all 0.3s;
+    border-right: 10px solid #1abc9c;
+}
+
+#sidebar .sidebar-header img {
+    border-radius: 50%;
+    border: 2px solid #ecf0f1;
+    display: block;
+    margin: 15px auto;
+}
+
+#sidebar .profile_info{
+    width: 100%;
+    padding: 10px 0px 10px 0px;
+    display: list-item;
+    background-color: #596877;
+}
+
+#sidebar .profile_info_bottom {
+    width: 100%;
+    padding: 10px 0px 10px 0px;
+    display: list-item;
+}
+
+#sidebar p{
+    margin: 0px 0px 0px 20px;
+    word-break: break-word;
+}
+
+#sidebar input.btn {
+    width: 90%;
+    margin: 8px auto;
+    display: block;
+}

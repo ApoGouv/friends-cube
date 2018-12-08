@@ -1,7 +1,5 @@
 <?php
 
-use FriendsCube\Helpers\FunctionLib as utils;
-
 class Post {
     private $user_obj;
     private $con;
@@ -18,8 +16,15 @@ class Post {
         $this->user_obj = new User($con, $user);
     }
 
-    // I moved this to includes/helpers/helper_collection
-    protected function dateDiffToString(DateTime $start_date, DateTime $end_date){
+    /**
+     * dateDiffToString
+     *  use Post::dateDiffToString($sdate, $edate)
+     *
+     * @param DateTime $start_date
+     * @param DateTime $end_date
+     * @return string of time difference
+     */
+    public static function dateDiffToString(DateTime $start_date, DateTime $end_date){
         $time_message = '';
         $interval = $start_date->diff($end_date); //Difference between dates
         /*
@@ -99,7 +104,7 @@ class Post {
             }
 
             //Insert post
-            $insert_post_data = array(
+            $insert_post_data = [
                 'body'       => $body,
                 'added_by'   => $added_by,
                 'user_to'    => $user_to,
@@ -107,7 +112,7 @@ class Post {
                 'user_closed' => 'no',
                 'deleted'    => 'no',
                 'likes'      => 0
-            );
+            ];
             $insert_post_query = "INSERT INTO posts VALUES ('', :body, :added_by, :user_to, :date_added, :user_closed, :deleted, :likes)";
             $this->con->prepare($insert_post_query)->execute($insert_post_data);
             $returned_id = $this->con->lastInsertId();
@@ -119,16 +124,14 @@ class Post {
             $num_posts++;
             $update_num_posts_query = "UPDATE users SET num_posts=:num_posts WHERE username=:username";
             $this->con->prepare($update_num_posts_query)
-                ->execute(array(
+                ->execute([
                     'num_posts' => $num_posts,
                     'username' => $added_by
-                ));
+                ]);
         }
     }
 
     public function loadPostsFriends($data, $limit){
-        include("./../helpers/helper_collection.php");//Helper functions
-
         $page = $data['page'];
         $userLoggedIn = $this->user_obj->getUsername();
 
@@ -142,7 +145,7 @@ class Post {
 
         $get_posts_query = "SELECT * FROM posts WHERE deleted = :deleted ORDER BY id DESC";
         $get_posts_stmt = $this->con->prepare($get_posts_query);
-        $get_posts_stmt->execute(array('deleted' => 'no'));
+        $get_posts_stmt->execute(['deleted' => 'no']);
 
         if( $get_posts_stmt->rowCount() > 0 ){
 
@@ -198,7 +201,7 @@ class Post {
                     //Added by User data
                     $user_details_query = "SELECT first_name, last_name, profile_pic FROM users WHERE username=:username";
                     $user_details_stmt = $this->con->prepare($user_details_query);
-                    $user_details_stmt->execute(array('username'=> $added_by));
+                    $user_details_stmt->execute(['username'=> $added_by]);
                     $user_row = $user_details_stmt->fetch();
 
                     /*highlight_string("<?php\n\$user_row =\n" . var_export($user_row, true) . ";\n?>");*/
@@ -229,15 +232,14 @@ class Post {
 
                     $check_comments_query = "SELECT * FROM comments WHERE post_id=? ORDER BY id ASC";
                     $check_comments_stmt = $this->con->prepare($check_comments_query);
-                    $check_comments_stmt->execute(array($id));
+                    $check_comments_stmt->execute([$id]);
                     $comments_check_num = $check_comments_stmt->rowCount();
 
                     //Timeframe
                     $date_time_now = date("Y-m-d H:i:s");
                     $start_date = new DateTime($date_time); //Time of post
                     $end_date = new DateTime($date_time_now); //Current time
-                    // $time_message = $this->dateDiffToString($start_date, $end_date);
-                    $time_message = utils\dateDiffToString($start_date, $end_date);
+                    $time_message = self::dateDiffToString($start_date, $end_date);
 
                     $str .= "<div class='status_post' onClick='javascript:toggle$id()'>
                                 <div class='post_profile_pic'>
@@ -304,7 +306,6 @@ class Post {
     }//End of loadPostsFriends()
 
     public function loadProfilePosts($data, $limit){
-        include("./../helpers/helper_collection.php");//Helper functions
 
         $page = $data['page'];
         $profileUser = $data['profileUser'];
@@ -321,11 +322,11 @@ class Post {
 
         $get_posts_query = "SELECT * FROM posts WHERE deleted = :deleted AND ((added_by= :added_by AND user_to='none') OR user_to= :user_to ) ORDER BY id DESC";
         $get_posts_stmt = $this->con->prepare($get_posts_query);
-        $get_posts_stmt->execute(array(
+        $get_posts_stmt->execute([
             'deleted' => 'no',
             'added_by' => $profileUser,
             'user_to' => $profileUser
-        ));
+        ]);
 
         if( $get_posts_stmt->rowCount() > 0 ){
 
@@ -362,7 +363,7 @@ class Post {
                 //Added by User data
                 $user_details_query = "SELECT first_name, last_name, profile_pic FROM users WHERE username=:username";
                 $user_details_stmt = $this->con->prepare($user_details_query);
-                $user_details_stmt->execute(array('username'=> $added_by));
+                $user_details_stmt->execute(['username'=> $added_by]);
                 $user_row = $user_details_stmt->fetch();
 
                 /*highlight_string("<?php\n\$user_row =\n" . var_export($user_row, true) . ";\n?>");*/
@@ -393,15 +394,14 @@ class Post {
 
                 $check_comments_query = "SELECT * FROM comments WHERE post_id=? ORDER BY id ASC";
                 $check_comments_stmt = $this->con->prepare($check_comments_query);
-                $check_comments_stmt->execute(array($id));
+                $check_comments_stmt->execute([$id]);
                 $comments_check_num = $check_comments_stmt->rowCount();
 
                 //Timeframe
                 $date_time_now = date("Y-m-d H:i:s");
                 $start_date = new DateTime($date_time); //Time of post
                 $end_date = new DateTime($date_time_now); //Current time
-                // $time_message = $this->dateDiffToString($start_date, $end_date);
-                $time_message = utils\dateDiffToString($start_date, $end_date);
+                $time_message = self::dateDiffToString($start_date, $end_date);
 
                 $str .= "<div class='status_post' onClick='javascript:toggle$id()'>
                             <div class='post_profile_pic'>

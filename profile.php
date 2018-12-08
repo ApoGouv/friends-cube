@@ -1,12 +1,14 @@
 <?php
     include("includes/header.php");
 
+    $message_obj = new Message($con, $userLoggedIn);
+
     if(isset($_GET['profile_username'])){
         $username = $_GET['profile_username'];
 
         $user_details_query = "SELECT * FROM users WHERE username = ?";
         $user_details_stmt = $con->prepare($user_details_query);
-        $user_details_stmt->execute(array($username));
+        $user_details_stmt->execute([$username]);
         $user_array = $user_details_stmt->fetch();
 
         //Count how many friends user has | -1 is cause we always have a , in the friends array
@@ -28,6 +30,21 @@
     // Handle "Respond to Request" button submit
     if(isset($_POST['respond_request'])){
         header("Location: requests.php");
+    }
+
+    if(isset($_POST['post_message'])){
+        if(isset($_POST['message_body'])){
+            $body = strip_tags($_POST['message_body']);
+            $date = date("Y-m-d H:i:s");
+            $message_obj->sendMessage($username, $body, $date);
+        }
+
+        $link = '#profileTabs a[href="#messages_div"]';
+        echo "<script>
+               $(function() {
+                   $('" . $link . "').tab('show');
+               });
+             </script>";
     }
 ?>
 
@@ -83,10 +100,54 @@
                 <div class="col-12">
                     <div class="news-feed card shadow-sm">
                         <div class="card-body">
+                            <!-- /#profileTabs -->
+                            <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="newsfeed-tab" data-toggle="tab" href="#newsfeed_div" role="tab" aria-controls="newsfeed_div" aria-selected="true">News</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="about-tab" data-toggle="tab" href="#about_div" role="tab" aria-controls="about_div" aria-selected="false">About</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages_div" role="tab" aria-controls="messages_div" aria-selected="false">Messages</a>
+                                </li>
+                            </ul>
 
-                            <div class="posts_area"></div><!-- /.posts_area -->
+                            <div class="tab-content" id="profileTabsContent">
+                                <div class="tab-pane fade show active" id="newsfeed_div" role="tabpanel" aria-labelledby="newsfeed-tab">
+                                    <div class="posts_area"></div><!-- /.posts_area -->
+                                    <img id="loading" src="assets/images/icons/pacman-1s-200px.gif" alt="Loading...">
+                                </div>
+                                <!-- /#newsfeed_div -->
 
-                            <img id="loading" src="assets/images/icons/pacman-1s-200px.gif" alt="Loading...">
+                                <div class="tab-pane fade" id="about_div" role="tabpanel" aria-labelledby="about-tab">
+                                </div>
+                                <!-- /#about_div -->
+
+                                <div class="tab-pane fade" id="messages_div" role="tabpanel" aria-labelledby="messages-tab">
+                                    <?php
+                                        echo "<h4> You and <a href='$username'>" . $profile_user_obj->getFullName() . "</a></h4><hr><br>";
+                                        echo "<div class='loaded_messages' id='scroll_messages'>";
+                                            echo $message_obj->getMessages($username);
+                                        echo "</div><!-- /.loaded_messages -->";
+                                    ?>
+
+                                    <div class="message_post">
+                                        <form action="" method="POST">
+                                            <textarea name='message_body' id='message_textarea' placeholder='Write your message ...'></textarea>
+                                            <input type='submit' name='post_message' class='btn btn-info' id='message_submit' value='Send'>
+                                        </form>
+                                    </div>
+                                    <script>
+                                        var div = document.getElementById("scroll_messages");
+                                        if  (div !== null){
+                                            div.scrollTop = div.scrollHeight; //scroll to the bottom of the messages div
+                                        }
+                                    </script>
+                                </div>
+                                <!-- /#messages_div -->
+                            </div>
+
                             <?php
                                 /* highlight_string("<?php\n\$user_array =\n" . var_export($user_array, true) . ";\n?>"); */
                             ?>

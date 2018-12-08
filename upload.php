@@ -148,10 +148,10 @@
             //Insert image into database
             $insert_pic_query = "UPDATE users SET profile_pic=:profile_pic WHERE username=:username";
             $insert_pic_stmt = $con->prepare($insert_pic_query);
-            $insert_pic_stmt->execute(array(
+            $insert_pic_stmt->execute([
                 'profile_pic' => $result_path,
                 'username' => $userLoggedIn
-            ));
+            ]);
             header("Location: ".$userLoggedIn);
 
     }// post x

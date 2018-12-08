@@ -300,3 +300,114 @@ button {
     margin: 8px auto;
     display: block;
 }
+
+ul#profileTabs {
+    margin-bottom: 15px;
+}
+
+/* Messages page */
+textarea#message_textarea {
+    width: 80%;
+    margin: 5px;
+}
+
+input#message_submit {
+    height: 54px;
+    width: 120px;
+    position: absolute;
+    margin: 5px;
+    font-family: 'Bellota-BoldItalic', sans-serif;
+    text-shadow: #9a9da0 0.5px 0.5px 0px;
+}
+
+.message {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 10px;
+    display: inline-block;
+    color: #fff;
+}
+
+.message#blue {
+    background-color: #3498db;
+    border-color: #2980b9;
+    float: right;
+    margin-bottom: 5px;
+}
+
+.message#green {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+    float: left;
+    margin-bottom: 5px;
+}
+
+.loaded_messages{
+    height: 65%;
+    min-height: 400px;
+    max-height: 450px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+}
+
+.loaded_conversations {
+    max-height: 275px;
+    overflow-y: scroll;
+}
+.loaded_conversations a {
+    text-decoration: none;
+}
+
+.user_found_messages{
+    border-bottom: 1px solid #d3d3d3;
+    padding: 8px 8px 10px 8px;
+    line-height: 16px;
+}
+.user_found_messages:hover{
+    background-color: #d3d3d3;
+}
+
+.user_found_messages img{
+    height: 35px;
+    float: left;
+}
+
+.lead {
+    font-size: 15px;
+    color: #7b7b7b;
+}
+.lead.timestamp.timestamp_smaller {
+    font-size: 12px;
+    color: #353535;
+}
+
+/* live friend search */
+.resultDisplay{
+    padding: 5px 5px 0px 5px;
+    height: 70px;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.resultDisplay a{
+    float: none;
+    text-decoration: none;
+}
+
+.resultDisplay:hover{
+    background-color: #d3d3d3;
+}
+.liveSearchProfilePic img{
+    height: 50px;
+    border-radius: 25px;
+    margin: 1px 12px 0px 2px;
+    float: left;
+}
+.liveSearchText{
+    background-color: transparent;
+    color: #343a40;
+}
+.liveSearchText p{
+    margin-left: 10px;
+    font-size: 12px;
+    margin-bottom: 0px;
+}

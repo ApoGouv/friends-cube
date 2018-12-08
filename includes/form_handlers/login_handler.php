@@ -8,7 +8,7 @@
 
         $get_db_data_query = "SELECT * FROM users WHERE email = :email";
         $get_db_data_stmt = $con->prepare($get_db_data_query);
-        $get_db_data_stmt->execute(array('email' => $email));
+        $get_db_data_stmt->execute(['email' => $email]);
         $possible_user_data = $get_db_data_stmt->fetch();
 
         // if we got the data from the DB
@@ -27,29 +27,29 @@
                 if ( isset($newHash) && $possible_user_data['user_closed'] === 'yes'){
                     // update password AND user_closed
                     $update_pass_n_user_closed_query = "UPDATE users SET password=:newhpass, user_closed=:user_closed WHERE email= :email";
-                    $update_pass_n_user_closed = $con->prepare($update_pass_n_user_closed_query)->execute(array(
+                    $update_pass_n_user_closed = $con->prepare($update_pass_n_user_closed_query)->execute([
                         'newhpass'    => $newHash,
                         'user_closed' => 'no',
                         'email'       => $email
-                    ));
+                    ]);
                     $update_pass_n_user_closed_done = $update_pass_n_user_closed->rowCount() ? true : false;
                 }else{
                     // Update password
                     if( isset($newHash) ){
                         $update_pass_query = "UPDATE users SET password=:newhpass WHERE email= :email";
-                        $update_pass = $con->prepare($update_pass_query)->execute(array(
+                        $update_pass = $con->prepare($update_pass_query)->execute([
                                 'newhpass'    => $newHash,
                                 'email'       => $email
-                        ));
+                        ]);
                         $update_pass_done = $update_pass->rowCount() ? true : false;
                     }
                     // Update user_closed option
                     if($possible_user_data['user_closed'] === 'yes'){
                         $update_user_closed_query = "UPDATE users SET user_closed=:user_closed WHERE email= :email";
-                        $update_user_closed = $con->prepare($update_user_closed_query)->execute(array(
+                        $update_user_closed = $con->prepare($update_user_closed_query)->execute([
                             'user_closed' => 'no',
                             'email'       => $email
-                        ));
+                        ]);
                         $update_user_closed_done = $update_user_closed->rowCount() ? true : false;
                     }
 
@@ -62,10 +62,10 @@
                 header("Location: index.php"); //Redirect user to index.php
                 exit(); //Stop further execution
             }else {
-                array_push($errors_array, "Email or password was incorrect<br>");
+                $errors_array[] = "Email or password was incorrect<br>";
             }
         }else {
-            array_push($errors_array, "Email or password was incorrect<br>");
+            $errors_array[] = "Email or password was incorrect<br>";
         }
     }
 ?>

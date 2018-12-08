@@ -2,12 +2,13 @@
     require 'config/config.php'; //Require our config
     include("includes/classes/User.php");
     include("includes/classes/Post.php");
+    include("includes/classes/Message.php");
 
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
         $user_details_query = "SELECT * FROM users WHERE username = :username";
         $user_details_stmt = $con->prepare($user_details_query);
-        $user_details_stmt->execute(array('username' => $userLoggedIn));
+        $user_details_stmt->execute(['username' => $userLoggedIn]);
         $user = $user_details_stmt->fetch();
 
         /*

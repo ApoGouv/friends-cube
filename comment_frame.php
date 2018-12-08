@@ -3,14 +3,11 @@
     include("includes/classes/User.php");
     include("includes/classes/Post.php");
 
-    include("includes/helpers/helper_collection.php");//Helper functions
-    use FriendsCube\Helpers\FunctionLib as utils;
-
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
         $user_details_query = "SELECT * FROM users WHERE username = :username";
         $user_details_stmt = $con->prepare($user_details_query);
-        $user_details_stmt->execute(array('username' => $userLoggedIn));
+        $user_details_stmt->execute(['username' => $userLoggedIn]);
         $user = $user_details_stmt->fetch();
     }else {
         // user is not logged in, so redirect to register page
@@ -60,7 +57,7 @@
 
         $user_query = "SELECT added_by, user_to FROM posts WHERE id=?";
         $stmt = $con->prepare($user_query);
-        $stmt->execute(array($post_id));
+        $stmt->execute([$post_id]);
         $row = $stmt->fetch();
 
         $posted_to = $row['added_by'];
@@ -69,14 +66,14 @@
             $post_body = strip_tags($_POST['post_body']);
             $date_time_now = date("Y-m-d H:i:s");
 
-            $post_comment_data = array(
+            $post_comment_data = [
                 'post_body' => $post_body,
                 'posted_by' => $userLoggedIn,
                 'posted_to' => $posted_to,
                 'date_added' => $date_time_now,
                 'removed' => 'no',
                 'post_id' => $post_id,
-            );
+            ];
             // add comment to DB
             $insert_post_query = "INSERT INTO comments VALUES ('', :post_body, :posted_by, :posted_to, :date_added, :removed, :post_id)";
             $con->prepare($insert_post_query)->execute($post_comment_data);
@@ -96,7 +93,7 @@
     <?php
         $get_comments_query = "SELECT * FROM comments WHERE post_id=? ORDER BY id ASC";
         $get_comments_stmt = $con->prepare($get_comments_query);
-        $get_comments_stmt->execute(array($post_id));
+        $get_comments_stmt->execute([$post_id]);
 
         if( $get_comments_stmt->rowCount() > 0 ){
             while ($comment = $get_comments_stmt->fetch() ){
@@ -110,7 +107,7 @@
                 //Timeframe
                 $start_date = new DateTime($date_added); //Time of post
                 $end_date = new DateTime( date("Y-m-d H:i:s") ); //Current time
-                $time_message = utils\dateDiffToString($start_date, $end_date);
+                $time_message = Post::dateDiffToString($start_date, $end_date);
 
                 $user_obj = new User($con, $posted_by);
 

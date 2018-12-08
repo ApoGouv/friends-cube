@@ -11,10 +11,10 @@
             //Update deleted post
             $update_deleted_post_query = "UPDATE posts SET deleted=? WHERE id=?";
             $update_deleted_post_stmt = $con->prepare($update_deleted_post_query);
-            $update_deleted_post_stmt->execute(array(
+            $update_deleted_post_stmt->execute([
                     $post_deleted,
                     $post_id
-                ));
+                ]);
         }
     }
 

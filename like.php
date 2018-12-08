@@ -3,14 +3,11 @@
     include("includes/classes/User.php");
     include("includes/classes/Post.php");
 
-    include("includes/helpers/helper_collection.php");//Helper functions
-    use FriendsCube\Helpers\FunctionLib as utils;
-
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
         $user_details_query = "SELECT * FROM users WHERE username = :username";
         $user_details_stmt = $con->prepare($user_details_query);
-        $user_details_stmt->execute(array('username' => $userLoggedIn));
+        $user_details_stmt->execute(['username' => $userLoggedIn]);
         $user = $user_details_stmt->fetch();
     }else {
         // user is not logged in, so redirect to register page
@@ -37,7 +34,7 @@
 
         $get_like_query = "SELECT likes, added_by FROM posts WHERE id=?";
         $get_like_smtp = $con->prepare($get_like_query);
-        $get_like_smtp->execute(array($post_id));
+        $get_like_smtp->execute([$post_id]);
 
         $row = $get_like_smtp->fetch();
         $total_likes = $row['likes'];
@@ -52,17 +49,17 @@
             $total_likes++;
             $update_post_likes_query = "UPDATE posts SET likes =? WHERE id = ?";
             $update_post_likes_smtp = $con->prepare($update_post_likes_query);
-            $update_post_likes_smtp->execute(array($total_likes, $post_id));
+            $update_post_likes_smtp->execute([$total_likes, $post_id]);
 
             //Increase and update total user's likes
             $user_total_likes++;
             $update_user_likes_query = "UPDATE users SET num_likes =? WHERE username = ?";
             $update_user_likes_smtp = $con->prepare($update_user_likes_query);
-            $update_user_likes_smtp->execute(array($user_total_likes, $user_liked));
+            $update_user_likes_smtp->execute([$user_total_likes, $user_liked]);
 
             //Add like info (user and post) to the DB
             $insert_like_query = "INSERT INTO likes VALUES ('', ?, ?)";
-            $con->prepare($insert_like_query)->execute(array($userLoggedIn, $post_id));
+            $con->prepare($insert_like_query)->execute([$userLoggedIn, $post_id]);
 
             //Insert Notification
         }
@@ -72,17 +69,17 @@
             $total_likes--;
             $update_post_likes_query = "UPDATE posts SET likes =? WHERE id = ?";
             $update_post_likes_smtp = $con->prepare($update_post_likes_query);
-            $update_post_likes_smtp->execute(array($total_likes, $post_id));
+            $update_post_likes_smtp->execute([$total_likes, $post_id]);
 
             //Decrease and update total user's likes
             $user_total_likes--;
             $update_user_likes_query = "UPDATE users SET num_likes =? WHERE username = ?";
             $update_user_likes_smtp = $con->prepare($update_user_likes_query);
-            $update_user_likes_smtp->execute(array($user_total_likes, $user_liked));
+            $update_user_likes_smtp->execute([$user_total_likes, $user_liked]);
 
             //Delete like info (user and post) from the DB
             $delete_like_query = "DELETE FROM likes WHERE username = ? AND post_id = ?";
-            $con->prepare($delete_like_query)->execute(array($userLoggedIn, $post_id));
+            $con->prepare($delete_like_query)->execute([$userLoggedIn, $post_id]);
 
             //Insert Notification
         }
@@ -90,7 +87,7 @@
         //Check for previous likes
         $check_query = "SELECT * FROM likes WHERE username = ? AND post_id = ? ";
         $check_smtp = $con->prepare($check_query);
-        $check_smtp->execute(array($userLoggedIn, $post_id));
+        $check_smtp->execute([$userLoggedIn, $post_id]);
 
         if ($check_smtp->rowCount() > 0){
             echo '<form action="like.php?post_id=' . $post_id . '" method="POST">

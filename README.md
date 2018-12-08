@@ -16,6 +16,8 @@ Used PDO + prepared statements all the way through,
 
 Used `password_hash()` to encrypt the user's password when save them in the DB during the registration and `password_verify()` and `password_needs_rehash()` in the login process.
 
+Used `$newArray = [];` to declare tables instead of `$newArray = array()` and `$someArray[] = $someVar;` instead of `array_push( $someArray, $someVar );`.
+
 Used more of the Bootstrap classes and functionality, while combining it with my own css.
 
 

@@ -55,40 +55,40 @@
                 //Check if email already exists
                 $email_exist_check_query = "SELECT 1 FROM users WHERE email = :email";
                 $email_exist_stmt = $con->prepare($email_exist_check_query);
-                $email_exist_stmt->execute(array('email' => $em));
+                $email_exist_stmt->execute(['email' => $em]);
                 $count_email_exist = $email_exist_stmt->fetchColumn();
 
                 //count the number of rows returned
                 if( $count_email_exist > 0 ){
-                    array_push($errors_array, 'Email already in use.<br>' );
+                    $errors_array[] = 'Email already in use.<br>';
                 }
 
             }else {
-                array_push($errors_array, 'Invalid Email format.<br>');
+                $errors_array[] = 'Invalid Email format.<br>';
             }
 
         }else {
-            array_push($errors_array, 'Emails do not match.<br>');
+            $errors_array[] = 'Emails do not match.<br>';
         }
 
         if( strlen($fname) > 25 || strlen($fname) < 2 ){
-            array_push($errors_array, 'Your first name must be between 2 and 25 characters.<br>');
+            $errors_array[] = 'Your first name must be between 2 and 25 characters.<br>';
         }
 
         if( strlen($lname) > 25 || strlen($lname) < 2 ){
-            array_push($errors_array, 'Your last name must be between 2 and 25 characters.<br>');
+            $errors_array[] = 'Your last name must be between 2 and 25 characters.<br>';
         }
 
         if($password != $password2){
-            array_push($errors_array, 'Your passwords do not match.<br>');
+            $errors_array[] = 'Your passwords do not match.<br>';
         }else {
             if ( preg_match('/[^A-Za-z0-9]/', $password) ){
-                array_push($errors_array, 'Your passwords can only contain english characters or numbers.<br>');
+                $errors_array[] = 'Your passwords can only contain english characters or numbers.<br>';
             }
         }
 
         if(strlen($password) > 30 || strlen($password) < 5){
-            array_push($errors_array, 'Your password must be between 5 and 30 characters.<br>');
+            $errors_array[] = 'Your password must be between 5 and 30 characters.<br>';
         }
 
         if(empty($errors_array)) {
@@ -100,14 +100,14 @@
             // Check DB if username exists
             $check_username_query = "SELECT username FROM users WHERE username = :username";
             $stmt_username = $con->prepare($check_username_query);
-            $stmt_username->execute(array('username' => $username));
+            $stmt_username->execute(['username' => $username]);
 
             $i = 0;
             while ($stmt_username->fetch()) {
                 //username exists, so add _# and try again
                 $i++; //Add 1 to $i
                 $username_changed = $username . "_" . $i;
-                $stmt_username->execute(array('username' => $username_changed));
+                $stmt_username->execute(['username' => $username_changed]);
             }
             $username = isset($username_changed) ? $username_changed : $username;
 
@@ -148,7 +148,7 @@
             $profile_pics = glob( $default_profile_pics_folder . "head_". "*.png" );
             $profile_pic = getBaseUrl().$profile_pics[array_rand($profile_pics)];
 
-            $user_data = array(
+            $user_data = [
                 'fname' => $fname,
                 'lname' => $lname,
                 'username' => $username,
@@ -160,7 +160,7 @@
                 'num_likes' => 0,
                 'user_closed' => 'no',
                 'friend_array' => ','
-            );
+            ];
             //Insert user to the DB
             $insert_user_query = "INSERT INTO users VALUES ('', :fname, :lname, :username, :em, :password, :date, :profile_pic, :num_posts, :num_likes, :user_closed, :friend_array)";
             $con->prepare($insert_user_query)->execute($user_data);

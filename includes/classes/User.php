@@ -30,7 +30,7 @@ class User {
         $this->con = $con;
         $user_details_query = "SELECT * FROM users WHERE username = :username";
         $user_details_stmt = $con->prepare($user_details_query);
-        $user_details_stmt->execute(array('username' => $user));
+        $user_details_stmt->execute(['username' => $user]);
         $this->user = $user_details_stmt->fetch();
     }
 
@@ -84,7 +84,7 @@ class User {
 
         $check_request_query = "SELECT * FROM friend_requests WHERE user_to=? AND user_from=?";
         $check_request_stmt = $this->con->prepare($check_request_query);
-        $check_request_stmt->execute(array($user_to, $user_from));
+        $check_request_stmt->execute([$user_to, $user_from]);
 
         if( $check_request_stmt->rowCount() > 0 ){
             return true;
@@ -98,7 +98,7 @@ class User {
 
         $check_request_query = "SELECT * FROM friend_requests WHERE user_to=? AND user_from=?";
         $check_request_stmt = $this->con->prepare($check_request_query);
-        $check_request_stmt->execute(array($user_to, $user_from));
+        $check_request_stmt->execute([$user_to, $user_from]);
 
         if( $check_request_stmt->rowCount() > 0 ){
             return true;
@@ -112,7 +112,7 @@ class User {
 
         $query = "SELECT friend_array FROM users WHERE username = ?";
         $stmt = $this->con->prepare($query);
-        $stmt->execute(array($user_to_remove));
+        $stmt->execute([$user_to_remove]);
         $row = $stmt->fetch();
 
         $friend_array_username = $row['friend_array'];
@@ -121,11 +121,11 @@ class User {
 
         $new_friend_array = str_replace( $user_to_remove . ",", "", $this->user['friend_array'] );
         $update_user_friend_array_stmt = $this->con->prepare($update_user_friend_array_query);
-        $update_user_friend_array_stmt->execute(array($new_friend_array, $logged_in_user));
+        $update_user_friend_array_stmt->execute([$new_friend_array, $logged_in_user]);
 
         $new_user_to_remove_friend_array = str_replace( $this->user['username'] . ",", "", $friend_array_username );
         $update_user_to_remove_friend_array_stmt = $this->con->prepare($update_user_friend_array_query);
-        $update_user_to_remove_friend_array_stmt->execute(array($new_user_to_remove_friend_array, $user_to_remove));
+        $update_user_to_remove_friend_array_stmt->execute([$new_user_to_remove_friend_array, $user_to_remove]);
     }
 
     // when pressing Add Friend
@@ -134,7 +134,7 @@ class User {
 
         $query = "INSERT INTO friend_requests VALUES('', ? , ?)";
         $stmt = $this->con->prepare($query);
-        $stmt->execute(array($user_to, $user_from));
+        $stmt->execute([$user_to, $user_from]);
     }
 
     public function getMutualFriends($user_to_check){
@@ -143,7 +143,7 @@ class User {
 
         $user_to_check_query = "SELECT friend_array FROM users WHERE username = ?";
         $stmt = $this->con->prepare($user_to_check_query);
-        $stmt->execute(array($user_to_check));
+        $stmt->execute([$user_to_check]);
         $row = $stmt->fetch();
 
         $user_to_check_friend_array = $row['friend_array'];

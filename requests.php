@@ -12,7 +12,7 @@
                             <?php
                                 $query = "SELECT * FROM friend_requests WHERE user_to = ?";
                                 $stmt = $con->prepare($query);
-                                $stmt->execute(array($userLoggedIn));
+                                $stmt->execute([$userLoggedIn]);
 
                                 if ( $stmt->rowCount() == 0 ){
                                     echo "You have no friend requests at the time!";
@@ -33,12 +33,12 @@
                                             $add_friend_query = "UPDATE users SET friend_array = CONCAT(friend_array, ?) WHERE username = ?";
 
                                             $add_friend_stmt = $con->prepare($add_friend_query);
-                                            $add_friend_stmt->execute(array( $user_from.',', $userLoggedIn ));// Add to current user friends list
-                                            $add_friend_stmt->execute(array( $userLoggedIn.',', $user_from ));// Add to "friend's" user friends list
+                                            $add_friend_stmt->execute([$user_from.',', $userLoggedIn]);// Add to current user friends list
+                                            $add_friend_stmt->execute([$userLoggedIn.',', $user_from]);// Add to "friend's" user friends list
 
                                             $remove_friend_request_query = "DELETE FROM friend_requests WHERE user_to = ? AND user_from = ?";
                                             $remove_friend_request_stmt = $con->prepare($remove_friend_request_query);
-                                            $remove_friend_request_stmt->execute(array( $userLoggedIn, $user_from ));
+                                            $remove_friend_request_stmt->execute([$userLoggedIn, $user_from]);
 
                                             echo "You are now friends!";
                                             header("Location: requests.php");
@@ -46,7 +46,7 @@
                                         if( isset( $_POST['ignore_request_' . $user_from ] ) ){
                                             $remove_friend_request_query = "DELETE FROM friend_requests WHERE user_to = ? AND user_from = ?";
                                             $remove_friend_request_stmt = $con->prepare($remove_friend_request_query);
-                                            $remove_friend_request_stmt->execute(array( $userLoggedIn, $user_from ));
+                                            $remove_friend_request_stmt->execute([$userLoggedIn, $user_from]);
 
                                             echo "Request Ignores!";
                                             header("Location: requests.php");

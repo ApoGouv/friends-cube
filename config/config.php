@@ -24,5 +24,5 @@
     }
 
     //Declare common variables
-    $errors_array = array(); //Holds error messages
+    $errors_array = []; //Holds error messages
 ?>

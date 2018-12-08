@@ -29,6 +29,15 @@
                             <p>Likes: <?php echo $user['num_likes']; ?></p>
                         </div>
                     </div><!-- /.card-body -->
+                    <?php if( $userLoggedIn === "goofy_duck"): ?>
+                    <div class="card-body row no-gutters">
+                        <div class="col">
+                            <p>The <strong>Goofy</strong> profile pic was taken from: <a href="http://www.pngall.com/goofy-png/download/16889">here</a></p>
+                            <p>under the <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="license" target="_blank">Creative Commons 4.0 BY-NC</a>.</p>
+                            <p>Here we cropped the original image, but no other changes made.</p>
+                        </div>
+                    </div><!-- /.card-body -->
+                    <?php endif; ?>
                 </div><!-- /.user_details column -->
             </div><!-- /.col-4 -->
             <div class="col-8">

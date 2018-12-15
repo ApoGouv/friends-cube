@@ -69,6 +69,16 @@ a:not([href]):not([tabindex]):focus {
     text-decoration: none;
 }
 
+li.nav-item {
+    position: relative;
+}
+/* badge positioning for unread messages and notifications */
+.nav-item span.badge {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
 /* -------------------------
  *         Content
  * -------------------------
@@ -301,6 +311,10 @@ button {
     display: block;
 }
 
+#content{
+    margin-left: 230px;
+}
+
 ul#profileTabs {
     margin-bottom: 15px;
 }
@@ -336,7 +350,7 @@ input#message_submit {
 }
 
 .message#green {
-    background-color: #2ecc71;
+    background-color: #1abc9c;
     border-color: #27ae60;
     float: left;
     margin-bottom: 5px;
@@ -410,4 +424,17 @@ input#message_submit {
     margin-left: 10px;
     font-size: 12px;
     margin-bottom: 0px;
+}
+
+
+/* dropdown messages*/
+.dropdown_data_window {
+    width: 300px;
+    border-top: none;
+    border-radius: 0px 0px 8px 8px;
+    position: absolute;
+    right: 15px;
+    background: #fff;
+    overflow-y: scroll;
+    z-index: 10;
 }

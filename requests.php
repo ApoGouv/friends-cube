@@ -1,7 +1,6 @@
 <?php
-    include("includes/header.php");
+    include_once("includes/header.php");
 ?>
-
 
         <div id="content">
             <div class="row">

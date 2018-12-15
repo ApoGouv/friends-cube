@@ -1,5 +1,9 @@
 <?php
 
+namespace FriendsCube;
+
+use FriendsCube\User;
+
 class Post {
     private $user_obj;
     private $con;
@@ -24,7 +28,7 @@ class Post {
      * @param DateTime $end_date
      * @return string of time difference
      */
-    public static function dateDiffToString(DateTime $start_date, DateTime $end_date){
+    public static function dateDiffToString(\DateTime $start_date, \DateTime $end_date){
         $time_message = '';
         $interval = $start_date->diff($end_date); //Difference between dates
         /*
@@ -237,8 +241,8 @@ class Post {
 
                     //Timeframe
                     $date_time_now = date("Y-m-d H:i:s");
-                    $start_date = new DateTime($date_time); //Time of post
-                    $end_date = new DateTime($date_time_now); //Current time
+                    $start_date = new \DateTime($date_time); //Time of post
+                    $end_date = new \DateTime($date_time_now); //Current time
                     $time_message = self::dateDiffToString($start_date, $end_date);
 
                     $str .= "<div class='status_post' onClick='javascript:toggle$id()'>
@@ -399,8 +403,8 @@ class Post {
 
                 //Timeframe
                 $date_time_now = date("Y-m-d H:i:s");
-                $start_date = new DateTime($date_time); //Time of post
-                $end_date = new DateTime($date_time_now); //Current time
+                $start_date = new \DateTime($date_time); //Time of post
+                $end_date = new \DateTime($date_time_now); //Current time
                 $time_message = self::dateDiffToString($start_date, $end_date);
 
                 $str .= "<div class='status_post' onClick='javascript:toggle$id()'>

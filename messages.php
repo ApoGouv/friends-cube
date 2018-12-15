@@ -1,5 +1,9 @@
 <?php
-    include("includes/header.php");
+    include_once("includes/header.php");
+
+    use FriendsCube\User;
+    use FriendsCube\Message;
+
     $message_obj = new Message($con, $userLoggedIn);
 
     if( isset($_GET['u']) ){
@@ -33,7 +37,7 @@
                     <div class="card-body row no-gutters">
                         <div class="col-auto">
                             <a href="<?php echo $userLoggedIn; ?>">
-                                <img classs="img-thumbnail img-profile-pic"
+                                <img class="img-thumbnail img-profile-pic"
                                     src="<?php echo $user['profile_pic']; ?>"
                                     alt="<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>"
                                     title="<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>">

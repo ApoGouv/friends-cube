@@ -1,4 +1,7 @@
 <?php
+
+namespace FriendsCube;
+
 class User {
     private $user;
     /* in the end we will get something like this

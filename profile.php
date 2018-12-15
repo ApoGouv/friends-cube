@@ -1,5 +1,7 @@
 <?php
-    include("includes/header.php");
+    include_once("includes/header.php");
+    use FriendsCube\Message;
+    use FriendsCube\User;
 
     $message_obj = new Message($con, $userLoggedIn);
 

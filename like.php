@@ -1,7 +1,10 @@
 <?php
-    require 'config/config.php'; //Require our config
-    include("includes/classes/User.php");
-    include("includes/classes/Post.php");
+    require_once 'config/config.php'; //Require our config
+    include_once("includes/classes/User.php");
+    include_once("includes/classes/Post.php");
+
+    use FriendsCube\User;
+    use FriendsCube\Post;
 
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];

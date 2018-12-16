@@ -3,13 +3,14 @@
 namespace FriendsCube;
 
 use FriendsCube\User;
+use FriendsCube\Notification;
 
 class Post {
     private $user_obj;
     private $con;
 
     /**
-     * User constructor method
+     * Post constructor method
      *
      * @param [PDO connection] $con | the PDO mySQL connection var
      * @param [string] $user | the username
@@ -122,6 +123,10 @@ class Post {
             $returned_id = $this->con->lastInsertId();
 
             //Insert notification
+            if($user_to !== 'none'){
+                $notification = new Notification($this->con, $added_by);
+                $notification->insertNotification($returned_id, $user_to, "profile_post");
+            }
 
             //Update post count
             $num_posts = $this->user_obj->getNumPosts();
@@ -469,6 +474,165 @@ class Post {
         echo $str;
 
     }//End of loadProfilePosts()
+
+    public function getSinglePost($post_id){
+
+        $userLoggedIn = $this->user_obj->getUsername();
+
+        $opened_query = "UPDATE notifications SET opened=:opened WHERE user_to=:user_to AND link LIKE :link";
+        $this->con->prepare($opened_query)
+            ->execute([
+                'opened' => 'yes',
+                'user_to' => $userLoggedIn,
+                'link' => '%=' . $post_id . ''
+            ]);
+
+        $str = ""; // string to return
+
+        $get_posts_query = "SELECT * FROM posts WHERE deleted=:deleted AND id=:id ORDER BY id DESC";
+        $get_posts_stmt = $this->con->prepare($get_posts_query);
+        $get_posts_stmt->execute([
+            'deleted' => 'no',
+            'id' => $post_id
+        ]);
+
+        if( $get_posts_stmt->rowCount() > 0 ){
+
+            $row = $get_posts_stmt->fetchall()[0]; //returns array with 1 entry, so we access it with [0]
+
+            $id = $row['id'];
+            $body = $row['body'];
+            $added_by = $row['added_by'];
+            $date_time = $row['date_added'];
+
+            //Prepare user_to string so it can be included even if not posted to a user
+            if($row['user_to'] == 'none'){
+                $user_to = "";
+            }else {
+                $user_to_obj = new User($this->con, $row['user_to']);
+                $user_to_name = $user_to_obj->getFullName();
+                $user_to = " to <a href='" . $row['user_to'] . "'>" . $user_to_name . "</a>";
+            }
+
+            //Check if user who posted, has their account closed
+            $added_by_obj = new User($this->con, $added_by);
+            if($added_by_obj->isClosed()){
+                return;
+            }
+
+            $user_logged_obj = new User($this->con, $userLoggedIn);
+            // show our posts and or friends posts
+            if($user_logged_obj->isFriend($added_by)){
+
+                    if($userLoggedIn == $added_by){
+                        $delete_button = "<button class='delete_button btn btn-danger' id='post$id'>X</button>";
+                    }else {
+                        $delete_button = "";
+                    }
+
+                    //Added by User data
+                    $user_details_query = "SELECT first_name, last_name, profile_pic FROM users WHERE username=:username";
+                    $user_details_stmt = $this->con->prepare($user_details_query);
+                    $user_details_stmt->execute(['username'=> $added_by]);
+                    $user_row = $user_details_stmt->fetch();
+
+                    /*highlight_string("<?php\n\$user_row =\n" . var_export($user_row, true) . ";\n?>");*/
+
+                    $first_name = $user_row['first_name'];
+                    $last_name = $user_row['last_name'];
+                    $profile_pic = $user_row['profile_pic'];
+
+                    ?>
+                    <script>
+                        function toggle<?php echo $id; ?>(){
+
+                            var target = $(event.target);
+                            if(!target.is("a")){
+                                var element = document.getElementById("toggleComment<?php echo $id; ?>");
+
+                                if (element.style.display == "block"){
+                                    element.style.display = "none";
+                                }else {
+                                    element.style.display = "block";
+                                }
+                            }
+
+                        }
+                    </script>
+
+                    <?php
+
+                    $check_comments_query = "SELECT * FROM comments WHERE post_id=? ORDER BY id ASC";
+                    $check_comments_stmt = $this->con->prepare($check_comments_query);
+                    $check_comments_stmt->execute([$id]);
+                    $comments_check_num = $check_comments_stmt->rowCount();
+
+                    //Timeframe
+                    $date_time_now = date("Y-m-d H:i:s");
+                    $start_date = new \DateTime($date_time); //Time of post
+                    $end_date = new \DateTime($date_time_now); //Current time
+                    $time_message = self::dateDiffToString($start_date, $end_date);
+
+                    $str .= "<div class='status_post' onClick='javascript:toggle$id()'>
+                                <div class='post_profile_pic'>
+                                    <img src='$profile_pic' width='50'>
+                                </div>
+
+                                <div class='posted_by' style='color:#ACACAC;'>
+                                    <a href='$added_by'>$first_name $last_name</a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$time_message
+                                    $delete_button
+                                </div>
+
+                                <div id='post_body'>
+                                    $body
+                                    <br>
+                                    <br>
+                                    <br>
+                                </div>
+
+                                <div class='friendscubePostOptions'>
+                                    Comments <span class='badge badge-dark'>$comments_check_num</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <iframe src='like.php?post_id=$id' id='like_iframe' frameborder='0' scrolling='no'></iframe>
+                                </div>
+
+                            </div>
+                            <div class='post_comment' id='toggleComment$id' style='display:none;'>
+                                <iframe src='comment_frame.php?post_id=$id' id='comment_iframe' frameborder='0'></iframe>
+                            </div>
+                            <hr>";
+                ?>
+                <script>
+                    $(document).ready(function(){
+
+                        $('#post<?php echo $id; ?>').on('click', function(){
+                            bootbox.confirm("Are you sure you want to delete this post?", function(result){
+
+                                $.post( "includes/form_handlers/delete_post.php?post_id=<?php echo $id; ?>", { result:result } );
+
+                                if(result){
+                                    location.reload();
+                                }
+
+                            })
+                        });
+
+                    });
+                </script>
+            <?php
+            } //End if isFriend
+            else{
+                echo "<p>You cannot see this post because you are not friends rith this user.</p>";
+                return;
+            }
+
+        } //End if
+        else {
+            echo "<p>No post found. If you clicked a link, it may be broken.</p>";
+            return;
+        }
+
+        echo $str;
+    }
 
 }
 

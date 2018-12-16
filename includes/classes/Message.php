@@ -9,7 +9,7 @@ class Message {
     private $con;
 
     /**
-     * User constructor method
+     * Message constructor method
      *
      * @param [PDO connection] $con | the PDO mySQL connection var
      * @param [string] $user | the username

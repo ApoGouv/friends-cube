@@ -18,6 +18,8 @@ Used `password_hash()` to encrypt the user's password when save them in the DB d
 
 Used `$newArray = [];` to declare tables instead of `$newArray = array()` and `$someArray[] = $someVar;` instead of `array_push( $someArray, $someVar );`.
 
+Used namespace for classes.
+
 Used more of the Bootstrap classes and functionality, while combining it with my own css.
 
 

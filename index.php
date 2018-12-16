@@ -1,6 +1,8 @@
 <?php
     include_once("includes/header.php");
 
+    use FriendsCube\Post;
+
     if(isset($_POST['post'])){
         $post = new Post($con, $userLoggedIn);
         $post->submitPost($_POST['post_text'], 'none');

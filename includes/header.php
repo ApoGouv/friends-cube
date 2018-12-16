@@ -3,8 +3,11 @@
     include_once("includes/classes/User.php");
     include_once("includes/classes/Post.php");
     include_once("includes/classes/Message.php");
+    include_once("includes/classes/Notification.php");
 
+    use FriendsCube\User;
     use FriendsCube\Message;
+    use FriendsCube\Notification;
 
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
@@ -64,7 +67,7 @@
     <?php echo '<!-- ' . basename($_SERVER['PHP_SELF']) . ' -->'; ?>
     <div id="main-nav">
         <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark fixed-top">
                 <a class="navbar-brand" href="index.php">FriendsCube!</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavContent" aria-controls="mainNavContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -78,6 +81,14 @@
                     //Unread Messages
                     $messages = new Message($con, $userLoggedIn);
                     $unread_num_messages = $messages->getUnreadMessagesNumber();
+
+                    //Unread Notifications
+                    $notifications = new Notification($con, $userLoggedIn);
+                    $unread_num_notifications = $notifications->getUnreadNotificationsNumber();
+
+                    //New Friend Request Notifications
+                    $user_obj = new User($con, $userLoggedIn);
+                    $fr_req__num = $user_obj->getNumberOfFriendRequests();
                 ?>
 
                 <div class="justify-content-end collapse navbar-collapse" id="mainNavContent">
@@ -96,18 +107,24 @@
                             <a class="nav-link" href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'message')">
                                 <i class="fas fa-envelope fa-lg"></i>
                                 <?php if( $unread_num_messages > 0 ): ?>
-                                <span class="badge badge-danger"><?php echo $unread_num_messages; ?></span>
+                                <span class="badge badge-danger" id="unread_message"><?php echo $unread_num_messages; ?></span>
                                 <?php endif; ?>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'notification')">
                                 <i class="fas fa-bell fa-lg"></i>
+                                <?php if( $unread_num_notifications > 0 ): ?>
+                                <span class="badge badge-danger" id="unread_notification"><?php echo $unread_num_notifications; ?></span>
+                                <?php endif; ?>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="requests.php">
                                 <i class="fas fa-users fa-lg"></i>
+                                <?php if( $fr_req__num > 0 ): ?>
+                                <span class="badge badge-danger" id="unread_friend_requests"><?php echo $fr_req__num; ?></span>
+                                <?php endif; ?>
                             </a>
                         </li>
                         <li class="nav-item">

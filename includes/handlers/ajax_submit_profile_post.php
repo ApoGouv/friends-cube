@@ -2,6 +2,7 @@
     include_once("../../config/config.php");
     include_once("../classes/User.php");
     include_once("../classes/Post.php");
+    include_once("../classes/Notification.php");
 
     use FriendsCube\Post;
 

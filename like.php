@@ -2,9 +2,11 @@
     require_once 'config/config.php'; //Require our config
     include_once("includes/classes/User.php");
     include_once("includes/classes/Post.php");
+    include_once("includes/classes/Notification.php");
 
     use FriendsCube\User;
     use FriendsCube\Post;
+    use FriendsCube\Notification;
 
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
@@ -65,6 +67,10 @@
             $con->prepare($insert_like_query)->execute([$userLoggedIn, $post_id]);
 
             //Insert Notification
+            if($user_liked !== $userLoggedIn){
+                $notification = new Notification($con, $userLoggedIn);
+                $notification->insertNotification($post_id, $user_liked, "like");
+            }
         }
         //Unlike Button
         if(isset($_POST['unlike_button'])){

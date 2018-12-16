@@ -72,6 +72,18 @@ class User {
         return $this->user['num_likes'];
     }
 
+    public function getNumberOfFriendRequests(){
+        $user_to = $this->user['username'];
+
+        $num_of_fr_req_query = "SELECT * FROM friend_requests WHERE user_to=:user_to";
+        $num_of_fr_req_stmt = $this->con->prepare($num_of_fr_req_query);
+        $num_of_fr_req_stmt->execute([
+            'user_to' => $user_to,
+            ]);
+
+        return $num_of_fr_req_stmt->rowCount();
+    }
+
     public function isFriend($username_to_check){
         $usernameComma = "," . $username_to_check . ",";
 

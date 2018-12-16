@@ -2,6 +2,11 @@
     require_once 'config/config.php'; //Require our config
     include_once("includes/classes/User.php");
     include_once("includes/classes/Post.php");
+    include_once("includes/classes/Notification.php");
+
+    use FriendsCube\User;
+    use FriendsCube\Post;
+    use FriendsCube\Notification;
 
     if( isset($_SESSION['username']) ){
         $userLoggedIn = $_SESSION['username'];
@@ -61,6 +66,7 @@
         $row = $stmt->fetch();
 
         $posted_to = $row['added_by'];
+        $user_to = $row['user_to'];
 
         if (isset($_POST['postComment' . $post_id])){
             $post_body = strip_tags($_POST['post_body']);
@@ -77,6 +83,35 @@
             // add comment to DB
             $insert_post_query = "INSERT INTO comments VALUES ('', :post_body, :posted_by, :posted_to, :date_added, :removed, :post_id)";
             $con->prepare($insert_post_query)->execute($post_comment_data);
+
+            //Insert Notification
+            if($posted_to !== $userLoggedIn){
+                $notification = new Notification($con, $userLoggedIn);
+                $notification->insertNotification($post_id, $posted_to, "comment");
+            }
+
+            if($user_to !== 'none' && $user_to !== $userLoggedIn) {
+                $notification = new Notification($con, $userLoggedIn);
+                $notification->insertNotification($post_id, $user_to, "profile_comment");
+            }
+
+            $get_commenters_query = "SELECT * FROM comments WHERE post_id=:post_id";
+            $get_commenters_stmt =  $con->prepare($get_commenters_query);
+            $get_commenters_stmt->execute([
+                'post_id' => $post_id
+            ]);
+            $notified_users = [];
+            while($row = $get_commenters_stmt->fetch() ){
+                if( $row['posted_by'] !== $posted_to && $row['posted_by'] !== $user_to
+                    && $row['posted_by'] !== $userLoggedIn && !in_array($row['posted_by'], $notified_users)
+                ){
+                    $notification = new Notification($con, $userLoggedIn);
+                    $notification->insertNotification($post_id, $row['posted_by'], "comment_non_owner");
+
+                    $notified_users[] = $row['posted_by'];
+                }
+            }
+
             echo "<p>Comment Posted!</p>";
         } //End if
 

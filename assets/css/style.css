@@ -85,6 +85,7 @@ li.nav-item {
  */
 .container.wrapper {
     padding: 10px 0 0 0;
+    margin-top: 72px;
 }
 
 /* -------------------------
@@ -313,6 +314,7 @@ button {
 
 #content{
     margin-left: 230px;
+    margin-top: 72px;
 }
 
 ul#profileTabs {
@@ -433,8 +435,25 @@ input#message_submit {
     border-top: none;
     border-radius: 0px 0px 8px 8px;
     position: absolute;
+    top: 72px;
     right: 15px;
     background: #fff;
     overflow-y: scroll;
     z-index: 10;
+}
+
+.resultDisplayNotification {
+    height: auto;
+    color: #1485bd;
+    padding-bottom: 7px;
+}
+.resultDisplayNotification img {
+    height: 40px;
+    border-radius: 5px;
+    margin: 1px 12px 0px 2px;
+    float: left;
+}
+.resultDisplayNotification .timestamp{
+    margin: 0px;
+    font-size: 85%;
 }

@@ -72,10 +72,25 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavContent" aria-controls="mainNavContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+                <div class="search">
+                    <form class="form my-2 my-lg-0" action="search.php" method="GET" name="search_form">
+                        <input
+                            id="search_text_input"
+                            class="form-control"
+                            type="search"
+                            onkeyup="getLiveSearchUsers(this.value, '<?php echo $userLoggedIn; ?>')"
+                            name="q"
+                            placeholder="Search..."
+                            aria-label="Search"
+                            autocomplete="off"
+                            >
+                        <div class="button_holder">
+                            <i class="fas fa-search"></i>
+                        </div><!-- /.button_holder -->
+                        <div class="search_results"></div><!-- /.search_results -->
+                        <div class="search_results_footer_empty"></div><!-- /.search_results_footer_empty -->
+                    </form>
+                </div><!-- /.search -->
 
                 <?php
                     //Unread Messages

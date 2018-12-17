@@ -7,7 +7,7 @@
     $query = $_POST['query'];
     $userLoggedIn = $_POST['userLoggedIn'];
 
-    $names = explode(" ", $query);
+    $names = explode(" ", $query); //Split search query in every space
 
     // assume user is searching for username IF their search contains _
     if( strpos($query, "_") !== false ){
@@ -22,7 +22,7 @@
         $users_stmt = $con->prepare($users_query);
         $users_stmt->execute([
             'firstname' => '%'.$names[0].'%',
-            'lasttname' => '%'.$names[1].'%',
+            'lastname' => '%'.$names[1].'%',
             'user_closed' => 'no',
         ]);
     }else {

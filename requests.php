@@ -1,5 +1,6 @@
 <?php
     include_once("includes/header.php");
+    use FriendsCube\User;
 ?>
 
         <div id="content">

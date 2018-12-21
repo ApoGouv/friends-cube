@@ -514,3 +514,20 @@ input#message_submit {
 .search_results_footer a{
 color: #fff;
 }
+
+.search-page .search_result {
+    padding: 10px;
+    height: 100px;
+}
+
+.search-page .searchPageFriendButtons {
+    float: right;
+}
+.search-page .result_profile_pic {
+    float: left;
+    margin-right: 10px;
+}
+
+.search-page  hr{
+    margin-bottom: 0px;
+}

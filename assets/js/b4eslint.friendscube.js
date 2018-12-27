@@ -1,4 +1,4 @@
-$(document).ready(() => {
+$(document).ready(function() {
   // Search form
   $('#search_text_input').focus(function() {
     if (window.matchMedia('(min-width: 800px)').matches) {
@@ -11,28 +11,28 @@ $(document).ready(() => {
   //     }
   // });
 
-  $('.button_holder').on('click', () => {
+  $('.button_holder').on('click', function() {
     document.search_form.submit();
   });
 
   // Button for profile post
-  $('#submit_profile_post').on('click', () => {
+  $('#submit_profile_post').on('click', function() {
     $.ajax({
       type: 'POST',
       url: 'includes/handlers/ajax_submit_profile_post.php',
       data: $('form.profile_post').serialize(),
-      success(msg) {
+      success: function(msg) {
         $('#post_form').modal('hide');
         location.reload();
       },
-      error() {
+      error: function() {
         alert('Oopps! Something went wrong! Please, try again!');
       }
     });
   });
 });
 
-$(document).click(e => {
+$(document).click(function(e) {
   if (e.target.class !== 'search_results' && e.target.id !== 'search_text_input') {
     $('.search_results').html('');
     $('.search_results_footer').html('');
@@ -52,7 +52,9 @@ $(document).click(e => {
  * @param {*} user: the logged-in user
  */
 function getUsers(value, user) {
-  $.post('includes/handlers/ajax_friend_search.php', { query: value, userLoggedIn: user }, data => {
+  $.post('includes/handlers/ajax_friend_search.php', { query: value, userLoggedIn: user }, function(
+    data
+  ) {
     $('.results').html(data);
   });
 }
@@ -63,9 +65,9 @@ function getUsers(value, user) {
  * @param {*} type: the type of data we want to load
  */
 function getDropdownData(user, type) {
-  if ($('.dropdown_data_window').css('height') === '0px') {
+  if ($('.dropdown_data_window').css('height') == '0px') {
     // If is closed
-    let pageName;
+    var pageName;
 
     if (type === 'notification') {
       pageName = 'ajax_load_notifications.php';
@@ -75,13 +77,13 @@ function getDropdownData(user, type) {
       $('span').remove('#unread_message');
     }
 
-    const ajaxReq = $.ajax({
-      url: `includes/handlers/${pageName}`,
+    var ajaxReq = $.ajax({
+      url: 'includes/handlers/' + pageName,
       type: 'POST',
-      data: `page=1&userLoggedIn=${user}`,
+      data: 'page=1&userLoggedIn=' + user,
       cache: false,
 
-      success(response) {
+      success: function(response) {
         $('.dropdown_data_window').html(response);
         $('.dropdown_data_window').css({
           padding: '0px',
@@ -102,18 +104,18 @@ function getDropdownData(user, type) {
   }
 }
 
-/* Get live users search result */
+/* Get live users search result*/
 function getLiveSearchUsers(value, user) {
-  $.post('includes/handlers/ajax_search.php', { query: value, userLoggedIn: user }, data => {
+  $.post('includes/handlers/ajax_search.php', { query: value, userLoggedIn: user }, function(data) {
     if ($('.search_results_footer_empty')[0]) {
       $('.search_results_footer_empty').toggleClass('search_results_footer');
       $('.search_results_footer_empty').toggleClass('search_results_footer_empty');
     }
 
     $('.search_results').html(data);
-    $('.search_results_footer').html(`<a href='search.php?q=${value}'>See All Results</a>`);
+    $('.search_results_footer').html("<a href='search.php?q=" + value + "'>See All Results</a>");
 
-    if (data === '' || value === '') {
+    if (data == '' || value == '') {
       $('.search_results_footer').html('');
       $('.search_results_footer').toggleClass('search_results_footer_empty');
       $('.search_results_footer').toggleClass('search_results_footer');

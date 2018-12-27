@@ -63,3 +63,6 @@ vendor/*
 /vendor/*
 assets/vendor/*
 /assets/vendor/*
+
+# npm scripts
+node_modules/

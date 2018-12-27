@@ -143,7 +143,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="settings.php">
                                 <i class="fas fa-cog fa-lg"></i>
                             </a>
                         </li>

@@ -1,0 +1,30 @@
+{
+  "name": "friends-cube",
+  "version": "1.0.0",
+  "description": "A social network site made with PHP, MySQL, HTML, CSS, JS",
+  "main": "friendscube.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApoGouv/friends-cube.git"
+  },
+  "author": "Apo Gouv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ApoGouv/friends-cube/issues"
+  },
+  "homepage": "https://github.com/ApoGouv/friends-cube#readme",
+  "devDependencies": {
+    "eslint": "^5.11.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.0",
+    "prettier": "^1.15.3"
+  }
+}

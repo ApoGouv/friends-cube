@@ -531,3 +531,10 @@ color: #fff;
 .search-page  hr{
     margin-bottom: 0px;
 }
+
+/* Settings page */
+img#small_profile_pic {
+    float: left;
+    height: 80px;
+    margin: 1px 12px 0 2px;
+}

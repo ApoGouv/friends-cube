@@ -23,7 +23,7 @@
                     $newHash = password_hash($password, PASSWORD_DEFAULT, ['cost' => 12]);
                 }
 
-                // update DB if pass has been rehashed or user had closed account
+                // update DB if pass has been rehashed and user had closed account
                 if ( isset($newHash) && $possible_user_data['user_closed'] === 'yes'){
                     // update password AND user_closed
                     $update_pass_n_user_closed_query = "UPDATE users SET password=:newhpass, user_closed=:user_closed WHERE email= :email";
@@ -32,7 +32,6 @@
                         'user_closed' => 'no',
                         'email'       => $email
                     ]);
-                    $update_pass_n_user_closed_done = $update_pass_n_user_closed->rowCount() ? true : false;
                 }else{
                     // Update password
                     if( isset($newHash) ){
@@ -41,7 +40,6 @@
                                 'newhpass'    => $newHash,
                                 'email'       => $email
                         ]);
-                        $update_pass_done = $update_pass->rowCount() ? true : false;
                     }
                     // Update user_closed option
                     if($possible_user_data['user_closed'] === 'yes'){
@@ -50,7 +48,6 @@
                             'user_closed' => 'no',
                             'email'       => $email
                         ]);
-                        $update_user_closed_done = $update_user_closed->rowCount() ? true : false;
                     }
 
                 }

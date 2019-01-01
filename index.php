@@ -4,10 +4,55 @@
     use FriendsCube\Post;
 
     if(isset($_POST['post'])){
-        $post = new Post($con, $userLoggedIn);
-        $post->submitPost($_POST['post_text'], 'none');
-        header("Location: index.php"); //Redirect to prevent form re-submit
-        exit;
+
+        $uploadOk = 1;
+        $imageName = $_FILES['fileToUpload']['name'];
+        $errorMessage = "";
+
+        if($imageName != "") {
+            //declare were we will save the image
+            $targetDir = "assets/images/posts/";
+            //append a unique id to the name of the image, in order to avoid overrides from others
+            $imageName = $targetDir . uniqid() . basename($imageName);
+            //get file type info
+            $imageFileType = pathinfo($imageName, PATHINFO_EXTENSION);
+
+            //file size check
+            if($_FILES['fileToUpload']['size'] > 10000000) {
+                $errorMessage = "Sorry your file is too large";
+                $uploadOk = 0;
+            }
+
+            if(strtolower($imageFileType) != "jpeg" && strtolower($imageFileType) != "png" && strtolower($imageFileType) != "jpg") {
+                $errorMessage = "Sorry, only jpeg, jpg and png files are allowed.";
+                $uploadOk = 0;
+            }
+
+            if($uploadOk) {
+                if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $imageName)) {
+                    //image uploaded okay
+                }
+                else {
+                    //image did not upload
+                    $errorMessage = "Failed to move image.";
+                    $uploadOk = 0;
+                }
+            }
+        }
+
+        if($uploadOk) {
+            $post = new Post($con, $userLoggedIn);
+            $post->submitPost($_POST['post_text'], 'none', $imageName);
+            header("Location: index.php"); //Redirect to prevent form re-submit
+            exit;
+        }
+        else {
+            if ($errorMessage !== "" ){
+                echo "<div class='alert alert-danger text-center'>
+                        $errorMessage
+                    </div>";
+            }
+        }
     }
 
 ?>
@@ -17,7 +62,7 @@
                     <div class="card-body row no-gutters">
                         <div class="col-auto">
                             <a href="<?php echo $userLoggedIn; ?>">
-                                <img classs="img-thumbnail img-profile-pic"
+                                <img class="img-thumbnail img-profile-pic"
                                     src="<?php echo $user['profile_pic']; ?>"
                                     alt="<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>"
                                     title="<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>">
@@ -40,12 +85,40 @@
                         </div>
                     </div><!-- /.card-body -->
                     <?php endif; ?>
+
+                    <div class="card-body row no-gutters">
+                        <div class="col trends">
+                            <h4>Popular</h4>
+                            <?php
+                                $get_trends_query = "SELECT * FROM trends ORDER BY hits DESC LIMIT 9";
+                                $get_trends_stmt = $con->query($get_trends_query);
+                                $trends = $get_trends_stmt->fetchAll();
+
+                                echo '<ul class="list-group">';
+                                    foreach ($trends as $trend){
+                                        $word = $trend['title'];
+                                        if( strlen($word) < 1 ){
+                                            continue;
+                                        }
+                                        $word_dot = strlen($word) >= 14 ? "..." : "";
+
+                                        $trimmed_word = str_split($word, 14);
+                                        $trimmed_word = $trimmed_word[0];
+                                        echo "<li class='list-group-item'>" . $trimmed_word . $word_dot . "</li>";
+                                    }
+                                echo '</ul>';
+                            ?>
+                        </div>
+                    </div><!-- /.card-body -->
                 </div><!-- /.user_details column -->
             </div><!-- /.col-4 -->
             <div class="col-8">
                 <div class="news-feed card shadow-sm">
                     <div class="card-body">
-                        <form action="index.php" method="POST" class="post_form">
+                        <form action="index.php" method="POST" class="post_form" enctype="multipart/form-data">
+                            <div class="form-group">
+                            <input type="file" class="form-control" name="fileToUpload" id="fileToUpload" accept="image/*">
+                            </div>
                             <textarea name="post_text"
                                       id="post_text"
                                       placeholder="Got something to say?"></textarea><!-- /#post_text -->

@@ -92,11 +92,41 @@ class Post {
         return $this->user_obj;
     }
 
-    public function submitPost($body, $user_to) {
+    public function submitPost($body, $user_to, $imageName) {
         $body = strip_tags($body); //removes html tags
         $check_empty = preg_replace('/\s+/', '', $body); //Delete all spaces
 
         if ($check_empty != ""){
+
+            // ----------------------------------
+            //feature START: embed YouTube videos
+
+            // split body at a space
+            $body_array = preg_split("/\s+/", $body);
+
+            foreach($body_array as $key => $value){
+                // check if we have a YouTube video
+                if( strpos($value, "www.youtube.com/watch?v=") !== false ){
+
+                    //https://www.youtube.com/watch?v=kCC8UIPrASA&list=RDkCC8UIPrASA&start_radio=1
+                    // Clean YouTube urls from lists by splitting the url at &
+                    $link = preg_split("!&!", $value);
+
+                    //modify the url to be embed ready
+                    $value = preg_replace("!watch\?v=!", "embed/", $link[0]);
+
+                    //add the embed url to an iframe
+                    $value = "<br><iframe width='420' height='315' src='" . $value . "'></iframe><br>";
+
+                    //save the modified value back to our body_array
+                    $body_array[$key] = $value;
+                }
+            }
+            // Join our body_array element back, by placing a space between each element
+            $body = implode(" ", $body_array);
+
+            //feature END: embed YouTube videos
+            // --------------------------------
 
             //Current date and time
             $date_added = date("Y-m-d H:i:s");
@@ -116,9 +146,10 @@ class Post {
                 'date_added' => $date_added,
                 'user_closed' => 'no',
                 'deleted'    => 'no',
-                'likes'      => 0
+                'likes'      => 0,
+                'image'      => $imageName,
             ];
-            $insert_post_query = "INSERT INTO posts VALUES ('', :body, :added_by, :user_to, :date_added, :user_closed, :deleted, :likes)";
+            $insert_post_query = "INSERT INTO posts VALUES ('', :body, :added_by, :user_to, :date_added, :user_closed, :deleted, :likes, :image)";
             $this->con->prepare($insert_post_query)->execute($insert_post_data);
             $returned_id = $this->con->lastInsertId();
 
@@ -137,6 +168,97 @@ class Post {
                     'num_posts' => $num_posts,
                     'username' => $added_by
                 ]);
+
+            // --------------------------------
+            //feature START: show popular words
+
+            //stopwords list. This is a list of words that we will skip from counting as popular.
+            $stopWords = "a about above across after again against all almost alone along already
+			 also although always among am an and another any anybody anyone anything anywhere are
+			 area areas around as ask asked asking asks at away b back backed backing backs be became
+			 because become becomes been before began behind being beings best better between big
+			 both but by c came can cannot case cases certain certainly clear clearly come could
+			 d did differ different differently do does done down down downed downing downs during
+			 e each early either end ended ending ends enough even evenly ever every everybody
+			 everyone everything everywhere f face faces fact facts far felt few find finds first
+			 for four from full fully further furthered furthering furthers g gave general generally
+			 get gets give given gives go going good goods got great greater greatest group grouped
+			 grouping groups h had has have having he her here herself high high high higher
+		     highest him himself his how however i im if important in interest interested interesting
+			 interests into is it its itself j just k keep keeps kind knew know known knows
+			 large largely last later latest least less let lets like likely long longer
+			 longest m made make making man many may me member members men might more most
+			 mostly mr mrs much must my myself n necessary need needed needing needs never
+			 new new newer newest next no nobody non noone not nothing now nowhere number
+			 numbers o of off often old older oldest on once one only open opened opening
+			 opens or order ordered ordering orders other others our out over p part parted
+			 parting parts per perhaps place places point pointed pointing points possible
+			 present presented presenting presents problem problems put puts q quite r
+			 rather really right right room rooms s said same saw say says second seconds
+			 see seem seemed seeming seems sees several shall she should show showed
+			 showing shows side sides since small smaller smallest so some somebody
+			 someone something somewhere state states still still such sure t take
+			 taken than that the their them then there therefore these they thing
+			 things think thinks this those though thought thoughts three through
+	         thus to today together too took toward turn turned turning turns two
+			 u under until up upon us use used uses v very w want wanted wanting
+			 wants was way ways we well wells went were what when where whether
+			 which while who whole whose why will with within without work
+			 worked working works would x y year years yet you young younger
+			 youngest your yours z lol haha omg hey ill iframe wonder else like
+             hate sleepy reason for some little yes bye choose";
+
+            //convert above stopwords into an array by splitting in whitespace
+            $stopWords = preg_split("/[\s,]+/", $stopWords);
+
+            //Replace/clear anything that is not a letter or number
+            $no_punctuation = preg_replace("/[^a-zA-Z 0-9]+/", "", $body);
+
+            //we will not count anything like a link
+            if( strpos($no_punctuation, "height") === false  &&
+                strpos($no_punctuation, "width") === false  &&
+                strpos($no_punctuation, "http") === false )
+            {
+                $no_punctuation = preg_split("/[\s,]+/", $no_punctuation);
+
+                foreach( $stopWords as $value ){
+                    foreach( $no_punctuation as $key => $value2 ){
+                        if( strtolower($value) === strtolower($value2) ){
+                            $no_punctuation[$key] = "";
+                        }
+                    }//end inner foreach
+                }//end outer foreach
+
+                foreach ( $no_punctuation as $value ){
+                    $this->calculateTrend( ucfirst($value) );
+                }
+
+            }
+
+            //feature END: show popular words
+            // ------------------------------
+        }
+    }
+
+    public function calculateTrend($term){
+        if($term !== ''){
+            $get_trends_query = "SELECT * FROM trends WHERE title=:title";
+            $get_trends_stmt = $this->con->prepare($get_trends_query);
+            $get_trends_stmt->execute(["title" => $term]);
+
+            if( $get_trends_stmt->rowCount() == 0 ){
+                $insert_trends_data = [
+                    'title' => $term,
+                    'hits'  => 1,
+                ];
+                $insert_trends_query = "INSERT INTO trends(title, hits) VALUES(:title, :hits)";
+                $this->con->prepare($insert_trends_query)->execute($insert_trends_data);
+            }else {
+                $update_trends_query = "UPDATE trends SET hits=hits+1 WHERE title=:title";
+                $update_trends_stmt = $this->con->prepare($update_trends_query);
+                $update_trends_stmt->execute(["title" => $term]);
+            }
+
         }
     }
 
@@ -169,6 +291,7 @@ class Post {
                 $body = $row['body'];
                 $added_by = $row['added_by'];
                 $date_time = $row['date_added'];
+                $imagePath = $row['image'];
 
                 //Prepare user_to string so it can be included even if not posted to a user
                 if($row['user_to'] == 'none'){
@@ -250,6 +373,14 @@ class Post {
                     $end_date = new \DateTime($date_time_now); //Current time
                     $time_message = self::dateDiffToString($start_date, $end_date);
 
+                    if($imagePath !== ""){
+                        $imageDiv = "<div class='postedImage'>
+                                        <img src='$imagePath'>
+                                    </div>";
+                    }else {
+                        $imageDiv = "";
+                    }
+
                     $str .= "<div class='status_post' onClick='javascript:toggle$id()'>
                                 <div class='post_profile_pic'>
                                     <img src='$profile_pic' width='50'>
@@ -263,6 +394,7 @@ class Post {
                                 <div id='post_body'>
                                     $body
                                     <br>
+                                    $imageDiv
                                     <br>
                                     <br>
                                 </div>

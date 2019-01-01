@@ -538,3 +538,11 @@ img#small_profile_pic {
     height: 80px;
     margin: 1px 12px 0 2px;
 }
+
+/* images on posts */
+.postedImage img {
+    max-height: 300px;
+    max-width: 100%;
+    margin: 5px auto;
+    display: block;
+}
